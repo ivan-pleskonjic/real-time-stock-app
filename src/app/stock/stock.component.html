@@ -1,0 +1,34 @@
+<div class="stock"
+  [ngClass]="{'disabled': !active, 'decreased': stock?.decrease }"
+>
+  <h1 class="name">{{ stock?.name | uppercase }}</h1>
+  <p class="current_price">{{ stock?.price | currency }}</p>
+
+  <div class="value">
+    <span class="label">Daily High</span>
+    <span>{{ stock?.dailyHighPrice | currency }}</span>
+  </div>
+
+  <div class="value">
+    <span class="label">Daily Low</span>
+    <span>{{ stock?.dailyLowPrice | currency }}</span>
+  </div>
+
+  <div class="value week_price">
+    <span class="label">52 Week High</span>
+    <span>{{ stock?.fiftyTwoWeekHighPrice | currency }}</span>
+  </div>
+
+  <div class="value week_price">
+    <span class="label">52 Week Low</span>
+    <span>{{ stock?.fiftyTwoWeekLowPrice | currency }}</span>
+  </div>
+
+  <label class="switch">
+    <input class="checkbox"
+      type="checkbox"
+      [checked]="active"
+      (change)="toggle(stock)" />
+    <span class="slider round"></span>
+  </label>
+</div>

@@ -1,0 +1,20 @@
+<h1 class="title">Real-Time Stock App</h1>
+<div class="ctrl">
+  <label>
+    <input
+      type="checkbox"
+      [checked]="useMockedData$ | async"
+      (change)="toggleSource($event)"
+    />
+    <span>Use Yahoo! Finance API</span>
+  </label>
+
+  <span>Last Updated: {{ lastUpdated$ | async }}</span>
+</div>
+<div class="container">
+  <app-stock *ngFor="let stock of stocks$ | async"
+    [activeStocks]="activeStocks"
+    [stock]="stock"
+    (toggleClicked)="onToggleClicked(stock)"
+  ></app-stock>
+</div>
