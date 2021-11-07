@@ -14,15 +14,13 @@ import { AppQuery } from './state/app.query';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, OnDestroy {
-  destoryed$ = new Subject();
-  activeStocks: string[] = [];
-  stocks$: Observable<Stock[]> = new Observable<Stock[]>();
-  lastUpdated$: Observable<string> = new Observable<string>();
-  useMockedData$: Observable<boolean> = new Observable<boolean>();
+  destoryed$                    = new Subject();
+  activeStocks: string[]        = [];
+  stocks$: Observable<Stock[]>  = new Observable<Stock[]>();
 
   constructor(
+    public appQuery: AppQuery,
     private appService: AppService,
-    private appQuery: AppQuery,
     private stockService: StockService,
     private stockQuery: StockQuery
   ) {}
@@ -38,6 +36,15 @@ export class AppComponent implements OnInit, OnDestroy {
 
   toggleSource(e: any): void {
     this.appService.toggleSource();
+    if (e.target.checked) {
+      this.stockService.stopGettingData();
+    } else {
+      this.stockService.startGettingData();
+    }
+  }
+
+  getYFData(): void {
+    this.stockService.getYFData();
   }
 
   private persistState(): void {
@@ -49,13 +56,13 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private syncState(): void {
-    /** App state */
-    this.useMockedData$ = this.appQuery.useMockedData$;
-    this.lastUpdated$ = this.appQuery.lastUpdated$;
     /** Stocks state */
-    this.stockService.startGettingData();
+    if (this.appQuery.getValue().useMockedData) {
+      this.stockService.startGettingData();
+    }
     this.stocks$ = this.stockQuery.selectAll();
-    this.stockQuery.selectActiveId().subscribe((activeStocks: any) => (this.activeStocks = activeStocks));
+    this.stockQuery.selectActiveId()
+      .subscribe((activeStocks: any) => (this.activeStocks = activeStocks));
   }
 
   ngOnDestroy(): void {

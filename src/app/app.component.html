@@ -1,18 +1,21 @@
 <h1 class="title">Real-Time Stock App</h1>
 <div class="ctrl">
-  <label>
-    <input
-      type="checkbox"
-      [checked]="useMockedData$ | async"
-      (change)="toggleSource($event)"
-    />
-    <span>Use Yahoo! Finance API</span>
-  </label>
+  <div class="controls">
+    <label>
+      <input type="checkbox" [checked]="!(appQuery.useMockedData$ | async)" (change)="toggleSource($event)" />
+      <span>Use Yahoo! Finance API</span>      
+    </label>
+    <button [disabled]="appQuery.useMockedData$ | async" class="load_btn" (click)="getYFData()">Load Data</button>
+  </div> 
 
-  <span>Last Updated: {{ lastUpdated$ | async }}</span>
+  <div class="controls">
+    <span>Last Updated: {{ appQuery.lastUpdated$ | async }}</span>
+    <span class="source_info">Data Retrieved From: {{ (appQuery.gotDataFromYF$ | async) ? 'Yahoo! Finance' : 'Mock Server' }}</span>
+  </div>  
 </div>
 <div class="container">
-  <app-stock *ngFor="let stock of stocks$ | async"
+  <app-stock
+    *ngFor="let stock of stocks$ | async"
     [activeStocks]="activeStocks"
     [stock]="stock"
     (toggleClicked)="onToggleClicked(stock)"

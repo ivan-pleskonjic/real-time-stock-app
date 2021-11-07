@@ -1,4 +1,13 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import { Stock } from './stock.model';
 
 @Component({
@@ -17,7 +26,7 @@ export class StockComponent implements OnInit, OnChanges {
   constructor() {}
 
   ngOnChanges(changes: SimpleChanges) {
-    this.active = this.stock ? this.activeStocks.includes(this.stock?.name) : false;    
+    this.active = this.stock ? this.activeStocks.includes(this.stock?.name) : false;
   }
 
   ngOnInit(): void {}

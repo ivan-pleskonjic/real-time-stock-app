@@ -4,12 +4,14 @@ import { Store, StoreConfig } from '@datorama/akita';
 export interface AppState {
   lastUpdated: string;
   useMockedData: boolean;
+  gotDataFromYF: boolean;
 }
 
 export function createInitialState(): AppState {
   return {
     lastUpdated: '',
-    useMockedData: true
+    useMockedData: true,
+    gotDataFromYF: false
   };
 }
 

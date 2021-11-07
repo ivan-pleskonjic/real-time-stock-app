@@ -1,22 +1,25 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { io } from 'socket.io-client';
 import { interval, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { environment as env } from '../../../environments/environment';
+import { settings } from '../../app.settings';
 import { AppService } from '../../state/app.service';
 import { currentTime } from '../../util/helpers';
 import { Stock } from '../stock.model';
 import { StockStore } from './stock.store';
 import { StockQuery } from './stock.query';
 
-
 @Injectable({ providedIn: 'root' })
 export class StockService {
   ws: any;
   stopped$ = new Subject();
+  private headers: HttpHeaders = new HttpHeaders();
 
   constructor(
+    private http:       HttpClient,
     private stockStore: StockStore,
     private stockQuery: StockQuery,
     private appService: AppService
@@ -34,24 +37,34 @@ export class StockService {
     this.ws.emit('getData');
   }
 
+  getYFData(): any {
+    this.headers = this.headers.set('x-rapidapi-host',  settings.RAPID_API_HOST);
+    this.headers = this.headers.set('x-rapidapi-key',   settings.RAPID_API_KEY);
+    this.http.get(settings.RAPID_API_URL, { headers: this.headers })
+      .subscribe( (data: any) => {
+        this.handleReceivedData(data.quoteResponse?.result, true);
+      });
+  }
+
   toggleActive(stock: Stock): void {
     this.stockStore.toggleActive(stock.name);
   }
 
   stopGettingData(): void {
     this.stopped$.next();
+    this.ws.disconnect();
   }
 
   private connect(): void {
     this.ws = io(env.WS_URL);
-
     this.ws.on('data', (data: any) => this.handleReceivedData(data));
   }
 
-  private handleReceivedData(data: any) { 
+  private handleReceivedData(data: any, YFData = false) { 
     const newData = this.transform(data)
                         .map(stock => this.getStock(stock));
 
+    this.appService.setGotDataFromYF(YFData);
     this.appService.setUpdateTime(currentTime())
     this.stockStore.set(newData);
   }

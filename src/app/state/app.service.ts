@@ -9,13 +9,16 @@ export class AppService {
     private appStore: AppStore
   ) {}
 
-  toggleSource() {
+  toggleSource(): void {
     const useMockedData = !this.appStore.getValue().useMockedData;
-    console.log('use mocked:' + useMockedData);
     this.appStore.update({ useMockedData });
   }
 
-  setUpdateTime(lastUpdated: string) {
+  setUpdateTime(lastUpdated: string): void {
     this.appStore.update({ lastUpdated })
+  }
+
+  setGotDataFromYF(gotDataFromYF: boolean): void {
+    this.appStore.update({ gotDataFromYF });
   }
 }
