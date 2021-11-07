@@ -37,7 +37,7 @@ export class StockService {
     this.ws.emit('getData');
   }
 
-  getYFData(): any {
+  getYFData(): void {
     this.headers = this.headers.set('x-rapidapi-host',  settings.RAPID_API_HOST);
     this.headers = this.headers.set('x-rapidapi-key',   settings.RAPID_API_KEY);
     this.http.get(settings.RAPID_API_URL, { headers: this.headers })
@@ -52,7 +52,7 @@ export class StockService {
 
   stopGettingData(): void {
     this.stopped$.next();
-    this.ws.disconnect();
+    this.ws?.disconnect();
   }
 
   private connect(): void {
@@ -60,7 +60,7 @@ export class StockService {
     this.ws.on('data', (data: any) => this.handleReceivedData(data));
   }
 
-  private handleReceivedData(data: any, YFData = false) { 
+  private handleReceivedData(data: any, YFData = false): void { 
     const newData = this.transform(data)
                         .map(stock => this.getStock(stock));
 
@@ -69,11 +69,11 @@ export class StockService {
     this.stockStore.set(newData);
   }
   
-  private getStock(stock: Stock): any {
+  getStock(stock: Stock): any {
     if (!stock) return;
     const activeStocks  = this.stockQuery.getValue().active;
     const prev          = this.stockQuery.getEntity(stock?.name);
-
+    
     if (!activeStocks.includes(stock.name) && prev) {
         return prev;
     }
@@ -82,7 +82,7 @@ export class StockService {
     return stock;
   }
 
-  private transform(data: any[]): any[] {
+  transform(data: any[]): Stock[] {
     return data.map((obj) => {
       return {
         name:                   obj.symbol,
@@ -90,7 +90,8 @@ export class StockService {
         dailyHighPrice:         obj.regularMarketDayHigh,
         dailyLowPrice:          obj.regularMarketDayLow,
         fiftyTwoWeekHighPrice:  obj.fiftyTwoWeekHigh,
-        fiftyTwoWeekLowPrice:   obj.fiftyTwoWeekLow
+        fiftyTwoWeekLowPrice:   obj.fiftyTwoWeekLow,
+        decrease:               undefined
       };
     });
   }

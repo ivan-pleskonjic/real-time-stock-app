@@ -16,7 +16,7 @@ import { StockComponent } from './stock/stock.component';
     AppRoutingModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [ HttpClientModule ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

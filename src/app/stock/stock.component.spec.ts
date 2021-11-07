@@ -19,7 +19,7 @@ describe('StockComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create Stock component', () => {
     expect(component).toBeTruthy();
   });
 });
