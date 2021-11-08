@@ -7,6 +7,7 @@ import { StockQuery } from './stock/state/stock.query';
 import { StockService } from './stock/state/stock.service';
 import { AppService } from './state/app.service';
 import { AppQuery } from './state/app.query';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -62,6 +63,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
     this.stocks$ = this.stockQuery.selectAll();
     this.stockQuery.selectActiveId()
+      .pipe(takeUntil(this.destoryed$))
       .subscribe((activeStocks: any) => (this.activeStocks = activeStocks));
   }
 
